@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/database/prisma.service';
-import { ParcelStatusHistory } from '@prisma/client';
+import type { ParcelStatusHistory } from '@prisma/client';
 
 export interface TrackingLocation {
   lat: number;

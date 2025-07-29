@@ -53,8 +53,17 @@ export class UsersService {
 
   async listUsers(): Promise<UserProfileResponseDto[]> {
     const users = await this.prisma.user.findMany({ where: { }, orderBy: { createdAt: 'desc' } });
-    return users.map(({ id, email, firstName, lastName, phone, role, profilePhoto, isActive, createdAt, updatedAt }) => ({
-      id, email, firstName, lastName, phone, role, profilePhoto: profilePhoto || undefined, isActive, createdAt, updatedAt
+    return users.map((user: { id: string; email: string; firstName: string; lastName: string; phone: string; role: string; profilePhoto: string | null; isActive: boolean; createdAt: Date; updatedAt: Date }) => ({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      role: user.role,
+      profilePhoto: user.profilePhoto || undefined,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     }));
   }
 

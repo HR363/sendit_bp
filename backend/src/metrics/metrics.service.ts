@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/database/prisma.service';
 import { subDays, startOfDay } from 'date-fns';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class MetricsService {
@@ -18,7 +19,7 @@ export class MetricsService {
       _sum: { price: true },
       where: { deletedAt: null }
     });
-    const totalRevenue = totalRevenueResult._sum.price || 0;
+    const totalRevenue = totalRevenueResult._sum.price ? Number(totalRevenueResult._sum.price) : 0;
 
     // Parcels created today
     const today = startOfDay(new Date());
@@ -36,7 +37,7 @@ export class MetricsService {
     });
     let averageDeliveryTime = 0;
     if (deliveredParcels.length > 0) {
-      const totalDays = deliveredParcels.reduce((sum, p) => {
+      const totalDays = deliveredParcels.reduce((sum: number, p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => {
         if (p.actualDeliveryDate) {
           const days = (p.actualDeliveryDate.getTime() - p.createdAt.getTime()) / (1000 * 60 * 60 * 24);
           return sum + days;
@@ -48,10 +49,10 @@ export class MetricsService {
 
     // On-time delivery rate (delivered parcels delivered before or on estimatedDeliveryDate)
     const deliveredWithDates = deliveredParcels.filter(
-      p => p.actualDeliveryDate !== null && p.estimatedDeliveryDate !== null
+      (p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => p.actualDeliveryDate !== null && p.estimatedDeliveryDate !== null
     );
     const onTimeDeliveries = deliveredWithDates.filter(
-      p => p.actualDeliveryDate && p.estimatedDeliveryDate && p.actualDeliveryDate <= p.estimatedDeliveryDate
+      (p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => p.actualDeliveryDate && p.estimatedDeliveryDate && p.actualDeliveryDate <= p.estimatedDeliveryDate
     ).length;
     const onTimeDeliveryRate = deliveredWithDates.length > 0 ? (onTimeDeliveries / deliveredWithDates.length) * 100 : 0;
 
@@ -67,10 +68,10 @@ export class MetricsService {
       }
     });
     // Group by month
-    const monthlyStats = monthlyStatsRaw.map(stat => ({
+    const monthlyStats = monthlyStatsRaw.map((stat: { createdAt: Date; _count: { _all: number }; _sum: { price: Decimal | null } }) => ({
       month: stat.createdAt.toISOString().slice(0, 7),
       parcels: stat._count._all,
-      revenue: stat._sum.price || 0
+      revenue: stat._sum.price ? Number(stat._sum.price) : 0
     }));
 
     // Recent activity (last 5 parcels)
@@ -96,10 +97,10 @@ export class MetricsService {
     });
     const statusDistribution = {
       total: totalParcels,
-      delivered: statusCounts.find(s => s.status === 'DELIVERED')?._count._all || 0,
-      inTransit: statusCounts.find(s => s.status === 'IN_TRANSIT')?._count._all || 0,
-      pending: statusCounts.find(s => s.status === 'PENDING')?._count._all || 0,
-      cancelled: statusCounts.find(s => s.status === 'CANCELLED')?._count._all || 0
+      delivered: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'DELIVERED')?._count._all || 0,
+      inTransit: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'IN_TRANSIT')?._count._all || 0,
+      pending: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'PENDING')?._count._all || 0,
+      cancelled: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'CANCELLED')?._count._all || 0
     };
 
     return {
@@ -149,7 +150,7 @@ export class MetricsService {
       _sum: { price: true },
       where: { senderId: userId, deletedAt: null }
     });
-    const totalSpent = totalSpentResult._sum.price || 0;
+    const totalSpent = totalSpentResult._sum.price ? Number(totalSpentResult._sum.price) : 0;
 
     // Average delivery time (in days) for parcels sent by user
     const deliveredParcels = await this.prisma.parcel.findMany({
@@ -158,7 +159,7 @@ export class MetricsService {
     });
     let averageDeliveryTime = 0;
     if (deliveredParcels.length > 0) {
-      const totalDays = deliveredParcels.reduce((sum, p) => {
+      const totalDays = deliveredParcels.reduce((sum: number, p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => {
         if (p.actualDeliveryDate) {
           const days = (p.actualDeliveryDate.getTime() - p.createdAt.getTime()) / (1000 * 60 * 60 * 24);
           return sum + days;
@@ -170,10 +171,10 @@ export class MetricsService {
 
     // On-time delivery rate (delivered parcels delivered before or on estimatedDeliveryDate)
     const deliveredWithDates = deliveredParcels.filter(
-      p => p.actualDeliveryDate !== null && p.estimatedDeliveryDate !== null
+      (p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => p.actualDeliveryDate !== null && p.estimatedDeliveryDate !== null
     );
     const onTimeDeliveries = deliveredWithDates.filter(
-      p => p.actualDeliveryDate && p.estimatedDeliveryDate && p.actualDeliveryDate <= p.estimatedDeliveryDate
+      (p: { createdAt: Date; actualDeliveryDate: Date | null; estimatedDeliveryDate: Date }) => p.actualDeliveryDate && p.estimatedDeliveryDate && p.actualDeliveryDate <= p.estimatedDeliveryDate
     ).length;
     const onTimeDeliveryRate = deliveredWithDates.length > 0 ? (onTimeDeliveries / deliveredWithDates.length) * 100 : 0;
 
@@ -185,10 +186,10 @@ export class MetricsService {
     });
     const statusDistribution = {
       total: totalSentParcels,
-      delivered: statusCounts.find(s => s.status === 'DELIVERED')?._count._all || 0,
-      inTransit: statusCounts.find(s => s.status === 'IN_TRANSIT')?._count._all || 0,
-      pending: statusCounts.find(s => s.status === 'PENDING')?._count._all || 0,
-      cancelled: statusCounts.find(s => s.status === 'CANCELLED')?._count._all || 0
+      delivered: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'DELIVERED')?._count._all || 0,
+      inTransit: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'IN_TRANSIT')?._count._all || 0,
+      pending: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'PENDING')?._count._all || 0,
+      cancelled: statusCounts.find((s: { status: string; _count: { _all: number } }) => s.status === 'CANCELLED')?._count._all || 0
     };
 
     // Recent activity (last 5 parcels sent or received by user)

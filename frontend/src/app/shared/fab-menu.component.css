@@ -1,11 +1,12 @@
 .fab-menu-container {
   position: fixed;
   right: 2.2rem;
-  bottom: 5.5rem; /* Adjusted to be above the footer */
-  z-index: 12000;
+  bottom: 8rem;
+  z-index: 99999; /* Increased z-index */
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
+  background: rgba(255,0,0,0.07); /* Debug: light red background, remove later */
 }
 
 .fab-btn {

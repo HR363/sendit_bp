@@ -9,7 +9,10 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot({
+      envFilePath: '.s.env',
+      isGlobal: true,
+    }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => {

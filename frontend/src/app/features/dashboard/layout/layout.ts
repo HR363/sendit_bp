@@ -4,7 +4,7 @@ import { UserService, UserProfile } from '../profile/user.service';
 import { Observable } from 'rxjs';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { ToastComponent } from '../../courier/toast.component';
-import { FabMenuComponent } from '../../shared';
+import { FabMenuComponent } from '../../../shared';
 
 @Component({
   selector: 'app-dashboard-layout',

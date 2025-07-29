@@ -1,0 +1,327 @@
+import { CreateParcelDto } from './dto/create-parcel.dto';
+import { UpdateParcelDto } from './dto/update-parcel.dto';
+import { AssignCourierDto } from './dto/assign-courier.dto';
+import { UpdateParcelStatusDto } from './dto/update-parcel-status.dto';
+import { ParcelsService } from './parcels.service';
+import { Request as ExpressRequest } from 'express';
+export declare class ParcelsController {
+    private readonly parcelsService;
+    constructor(parcelsService: ParcelsService);
+    createParcel(dto: CreateParcelDto, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        id: string;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        trackingNumber: string;
+        status: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    updateParcel(id: string, dto: UpdateParcelDto, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }>;
+    assignCourier(id: string, dto: AssignCourierDto): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }>;
+    updateStatus(id: string, dto: UpdateParcelStatusDto, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }>;
+    getSentParcels(req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }[]>;
+    getReceivedParcels(req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }[]>;
+    getAssignedParcels(req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }[]>;
+    getAllParcels(): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }[]>;
+    getParcelById(id: string, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    } | null>;
+    getParcelStatusHistory(id: string, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        status: string;
+        id: string;
+        createdAt: Date;
+        parcelId: string;
+        location: string;
+        notes: string | null;
+        updatedById: string;
+    }[]>;
+    softDeleteParcel(id: string, req: ExpressRequest & {
+        user: {
+            userId: string;
+            role: string;
+        };
+    }): Promise<{
+        trackingNumber: string;
+        status: string;
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        description: string | null;
+        senderId: string | null;
+        receiverId: string | null;
+        categoryId: string | null;
+        senderName: string;
+        senderPhone: string;
+        senderEmail: string;
+        receiverName: string;
+        receiverPhone: string;
+        receiverEmail: string;
+        pickupLocation: string;
+        destinationLocation: string;
+        weight: import("@prisma/client/runtime/library").Decimal;
+        estimatedDeliveryDate: Date;
+        actualDeliveryDate: Date | null;
+        price: import("@prisma/client/runtime/library").Decimal;
+        assignedCourierId: string | null;
+        createdById: string;
+        deliveryImage: string | null;
+    }>;
+}
