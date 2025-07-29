@@ -1,0 +1,70 @@
+<div class="flex flex-col h-full w-full p-8 bg-orange-50">
+  <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome, {{ user?.firstName || 'User' }}!</h1>
+  <p class="text-lg text-gray-600 mb-8">Here's an overview of your recent parcel activity and key statistics.</p>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-2xl font-bold text-orange-500">1,234</span>
+      <span class="text-gray-600">Total Sent Parcels</span>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-2xl font-bold text-green-500">987</span>
+      <span class="text-gray-600">Total Received Parcels</span>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-2xl font-bold text-blue-500">45</span>
+      <span class="text-gray-600">Parcels In Transit</span>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-2xl font-bold text-yellow-500">8</span>
+      <span class="text-gray-600">Pending Deliveries</span>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="md:col-span-2 bg-white rounded-xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-2 text-green-600"><i class="fa-solid fa-circle-check"></i> Delivered Parcel #PS67810 to New York. <span class="text-gray-400 ml-auto text-xs">15 minutes ago</span></li>
+        <li class="flex items-center gap-2 text-blue-600"><i class="fa-solid fa-truck"></i> In Transit: Parcel #PS67810 to Los Angeles. <span class="text-gray-400 ml-auto text-xs">1 hour ago</span></li>
+        <li class="flex items-center gap-2 text-gray-600"><i class="fa-solid fa-box"></i> Ready for Pickup: Parcel #PM98741. <span class="text-gray-400 ml-auto text-xs">3 hours ago</span></li>
+        <li class="flex items-center gap-2 text-yellow-600"><i class="fa-solid fa-clock"></i> Processing: Parcel #PS67920 at sorting facility. <span class="text-gray-400 ml-auto text-xs">Yesterday</span></li>
+        <li class="flex items-center gap-2 text-red-600"><i class="fa-solid fa-circle-exclamation"></i> Delivery Attempt: Parcel #PS67835 failed. <span class="text-gray-400 ml-auto text-xs">2 days ago</span></li>
+        <li class="flex items-center gap-2 text-green-600"><i class="fa-solid fa-circle-check"></i> Delivered Parcel #PS67810 to location. <span class="text-gray-400 ml-auto text-xs">3 days ago</span></li>
+      </ul>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Parcel Status Distribution</h2>
+      <!-- Chart placeholder -->
+      <div class="w-40 h-40 flex items-center justify-center">
+        <div class="w-32 h-32 rounded-full border-8 border-orange-400 border-t-gray-200 border-b-green-400 border-l-yellow-400"></div>
+      </div>
+      <span class="text-xs text-gray-400 mt-2">(Chart placeholder)</span>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+      <div class="flex gap-4">
+        <a routerLink="/parcels/create" class="flex flex-col items-center bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition">
+          <i class="fa-solid fa-plus text-xl text-orange-500 mb-1"></i>
+          <span class="text-sm font-semibold">Request Pickup</span>
+        </a>
+        <a routerLink="/parcels/track" class="flex flex-col items-center bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition">
+          <i class="fa-solid fa-location-dot text-xl text-orange-500 mb-1"></i>
+          <span class="text-sm font-semibold">Track Existing Parcel</span>
+        </a>
+        <a routerLink="/support" class="flex flex-col items-center bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition">
+          <i class="fa-solid fa-headset text-xl text-orange-500 mb-1"></i>
+          <span class="text-sm font-semibold">Contact Support</span>
+        </a>
+        <a routerLink="/reports" class="flex flex-col items-center bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition">
+          <i class="fa-solid fa-file-lines text-xl text-orange-500 mb-1"></i>
+          <span class="text-sm font-semibold">View Reports</span>
+        </a>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Important Announcements</h2>
+      <p class="text-gray-600">Stay updated on our latest service enhancements and shipping schedules. No new announcements at this time.</p>
+    </div>
+  </div>
+</div>

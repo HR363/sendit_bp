@@ -1,0 +1,309 @@
+body, .dashboard-main-bg, .dashboard-content-bg {
+  background: #f7fafd !important;
+}
+
+/* Modern Summary Cards */
+.summary-cards-modern {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.card-modern {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px #e5e7eb80;
+  padding: 1.5rem 2.5rem;
+  min-width: 260px;
+  flex: 1 1 220px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card-modern:hover {
+  box-shadow: 0 8px 24px #e5e7eb80;
+  transform: translateY(-2px) scale(1.03);
+}
+.icon-bg {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: #f7fafd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  color: #fd7e14;
+  box-shadow: 0 2px 8px #e5e7eb80;
+}
+.icon-bg.in-transit { color: #2563eb; background: #e0f2fe; }
+.icon-bg.delivered { color: #10b981; background: #dcfce7; }
+.icon-bg.pending { color: #f59e42; background: #fef9c3; }
+
+.card-title {
+  font-size: 1.1rem;
+  color: #181c32;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.card-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #181c32;
+  margin-bottom: 0.1rem;
+}
+.card-desc {
+  font-size: 0.98rem;
+  color: #6b7280;
+}
+
+/* Tabs and Filter Modern */
+.tabs-filter-row-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: transparent;
+  box-shadow: none;
+}
+.tabs-modern {
+  display: flex;
+  gap: 0.7rem;
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 8px #e5e7eb40;
+  padding: 0.3rem 0.5rem;
+}
+.tab-modern {
+  background: transparent;
+  color: #181c32;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 0.8rem 2.5rem;
+  font-size: 1.13rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  position: relative;
+}
+.tab-modern.active {
+  color: #fd7e14;
+  background: #fff;
+}
+.tab-modern.active::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  bottom: 0.3rem;
+  height: 3px;
+  border-radius: 2px;
+  background: #fd7e14;
+}
+.tab-modern:hover {
+  color: #fd7e14;
+  background: #f7fafd;
+}
+.filter-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.05rem;
+  color: #181c32;
+  background: #fff;
+  border-radius: 0.7rem;
+  padding: 0.5rem 1.2rem;
+  box-shadow: 0 2px 8px #e5e7eb80;
+}
+#status-filter {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  background: #fff;
+  color: #181c32;
+}
+
+/* Modern Table */
+.table-container-modern {
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px #e5e7eb80;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin-bottom: 2.5rem;
+  overflow-x: auto;
+}
+.parcels-table-modern {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.07rem;
+}
+.parcels-table-modern th, .parcels-table-modern td {
+  padding: 1.1rem 1.3rem;
+  text-align: left;
+}
+.parcels-table-modern th {
+  color: #181c32;
+  font-size: 1.08rem;
+  font-weight: 700;
+  border-bottom: 2px solid #e5e7eb;
+  background: #fff;
+}
+.parcels-table-modern tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+.parcels-table-modern tbody tr:hover {
+  background: #f7fafd;
+}
+.details-btn-modern {
+  background: #181c32;
+  color: #fff;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.45rem 1.2rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, border 0.2s;
+  box-shadow: 0 1px 6px #e5e7eb60;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  height: 2.2rem;
+}
+.details-btn-modern i {
+  color: #fff;
+  font-size: 1.1rem;
+}
+.details-btn-modern:hover {
+  background: #181c32;
+  color: #fff;
+  border: 2px solid #fd7e14;
+  box-shadow: 0 2px 12px #fd7e1440;
+  transform: scale(1.05);
+}
+.details-btn-modern:hover i {
+  color: #fd7e14;
+}
+
+/* Status Badges Modern */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.badge.delivered {
+  background: #10b981;
+}
+
+.badge.in-transit {
+  background: #2563eb;
+}
+
+.badge.pending {
+  background: #f59e0b;
+}
+
+.badge.cancelled {
+  background: #ef4444;
+}
+
+.badge.picked-up {
+  background: #8b5cf6;
+}
+
+.badge.out-for-delivery {
+  background: #06b6d4;
+}
+
+/* Avatar Modern */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: #f7fafd;
+  color: #fd7e14;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  box-shadow: 0 2px 8px #e5e7eb80;
+  border: 1.5px solid #e5e7eb;
+}
+
+/* Modern Pagination */
+.pagination-modern {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+}
+.page-btn-modern {
+  background: #fff;
+  color: #fd7e14;
+  border: 2px solid #fd7e14;
+  border-radius: 2rem;
+  padding: 0.55rem 1.3rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, border 0.2s;
+  box-shadow: 0 2px 8px #e5e7eb80;
+}
+.page-btn-modern.active, .page-btn-modern:hover {
+  background: #fd7e14;
+  color: #fff;
+  border-color: #fd7e14;
+  box-shadow: 0 4px 16px #e5e7eb80;
+  transform: scale(1.07);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .summary-cards-modern {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .card-modern {
+    min-width: 0;
+    width: 100%;
+  }
+  .tabs-filter-row-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+  .table-container-modern {
+    padding: 1rem 0.5rem 1rem 0.5rem;
+  }
+  .parcels-table-modern th, .parcels-table-modern td {
+    padding: 0.7rem 0.7rem;
+  }
+}
+@media (max-width: 600px) {
+  .card-modern {
+    padding: 1rem 1rem;
+  }
+  .table-container-modern {
+    padding: 0.5rem 0.2rem 0.5rem 0.2rem;
+  }
+}

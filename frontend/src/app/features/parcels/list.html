@@ -1,0 +1,148 @@
+<!-- Modern Summary Cards -->
+<div class="summary-cards-modern">
+  <div class="card-modern" *ngIf="stats$ | async as stats">
+    <div class="icon-bg"><i class="fa-solid fa-box"></i></div>
+    <div>
+      <div class="card-title">Total Parcels</div>
+      <div class="card-value">{{ stats.totalParcels }}</div>
+      <div class="card-desc">All your active shipments</div>
+    </div>
+  </div>
+  <div class="card-modern" *ngIf="stats$ | async as stats">
+    <div class="icon-bg in-transit"><i class="fa-solid fa-truck-fast"></i></div>
+    <div>
+      <div class="card-title">In Transit</div>
+      <div class="card-value">{{ stats.inTransit }}</div>
+      <div class="card-desc">Currently on the way</div>
+    </div>
+  </div>
+  <div class="card-modern" *ngIf="stats$ | async as stats">
+    <div class="icon-bg delivered"><i class="fa-solid fa-circle-check"></i></div>
+    <div>
+      <div class="card-title">Delivered</div>
+      <div class="card-value">{{ stats.delivered }}</div>
+      <div class="card-desc">Successfully completed</div>
+    </div>
+  </div>
+  <div class="card-modern" *ngIf="stats$ | async as stats">
+    <div class="icon-bg pending"><i class="fa-solid fa-clock"></i></div>
+    <div>
+      <div class="card-title">Pending Pickup</div>
+      <div class="card-value">{{ stats.pendingPickup }}</div>
+      <div class="card-desc">Awaiting collection</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs and Filter -->
+<div class="tabs-filter-row-modern">
+  <div class="tabs-modern">
+    <button class="tab-modern" [class.active]="activeTab === 'sent'" (click)="switchTab('sent')"><i class="fa-solid fa-paper-plane"></i> Parcels I Sent</button>
+    <button class="tab-modern" [class.active]="activeTab === 'toMe'" (click)="switchTab('toMe')"><i class="fa-solid fa-inbox"></i> Parcels To Me</button>
+  </div>
+  <div class="filter-modern">
+    <label for="status-filter"><i class="fa-solid fa-filter"></i> Filter by Status:</label>
+    <select id="status-filter" (change)="setStatusFilter($event)">
+      <option value="All">All</option>
+      <option value="PENDING">Pending</option>
+      <option value="PICKED_UP">Picked Up</option>
+      <option value="IN_TRANSIT">In Transit</option>
+      <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+      <option value="DELIVERED">Delivered</option>
+      <option value="CANCELLED">Cancelled</option>
+    </select>
+  </div>
+</div>
+
+<!-- Modern Parcels Table -->
+<div class="table-container-modern">
+  <table class="parcels-table-modern">
+    <thead>
+      <tr>
+        <th>Parcel ID</th>
+        <th>Receiver Name</th>
+        <th>Status</th>
+        <th>Delivery Date</th>
+        <th>Origin</th>
+        <th>Destination</th>
+        <th>Weight</th>
+        <th>Cost</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngIf="activeTab === 'sent'">
+        <tr *ngFor="let parcel of filteredSentParcels$ | async">
+        <td>{{ parcel.id }}</td>
+        <td><span class="avatar"><i class="fa-solid fa-user"></i></span> {{ parcel.receiverName }}</td>
+        <td>
+            <span class="badge" [ngClass]="{
+              'delivered': parcel.status === 'DELIVERED',
+              'in-transit': parcel.status === 'IN_TRANSIT',
+              'pending': parcel.status === 'PENDING',
+              'cancelled': parcel.status === 'CANCELLED',
+              'picked-up': parcel.status === 'PICKED_UP',
+              'out-for-delivery': parcel.status === 'OUT_FOR_DELIVERY'
+            }">
+              <i class="fa-solid" [ngClass]="{
+                'fa-circle-check': parcel.status === 'DELIVERED',
+                'fa-truck-fast': parcel.status === 'IN_TRANSIT',
+                'fa-clock': parcel.status === 'PENDING',
+                'fa-xmark': parcel.status === 'CANCELLED',
+                'fa-box': parcel.status === 'PICKED_UP',
+                'fa-truck': parcel.status === 'OUT_FOR_DELIVERY'
+              }"></i>
+              {{ parcel.status.replace('_', ' ') }}
+            </span>
+        </td>
+        <td>{{ parcel.estimatedDeliveryDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ parcel.pickupLocation.address }}</td>
+        <td>{{ parcel.destinationLocation.address }}</td>
+        <td>{{ parcel.weight }} kg</td>
+        <td>${{ parcel.price }}</td>
+        <td><a [routerLink]="['/dashboard/parcels', parcel.id]" class="details-btn-modern"><i class="fa-solid fa-eye"></i> View Details</a></td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="activeTab === 'toMe'">
+        <tr *ngFor="let parcel of filteredToMeParcels$ | async">
+          <td>{{ parcel.id }}</td>
+          <td><span class="avatar"><i class="fa-solid fa-user"></i></span> {{ parcel.senderName }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'delivered': parcel.status === 'DELIVERED',
+              'in-transit': parcel.status === 'IN_TRANSIT',
+              'pending': parcel.status === 'PENDING',
+              'cancelled': parcel.status === 'CANCELLED',
+              'picked-up': parcel.status === 'PICKED_UP',
+              'out-for-delivery': parcel.status === 'OUT_FOR_DELIVERY'
+            }">
+              <i class="fa-solid" [ngClass]="{
+                'fa-circle-check': parcel.status === 'DELIVERED',
+                'fa-truck-fast': parcel.status === 'IN_TRANSIT',
+                'fa-clock': parcel.status === 'PENDING',
+                'fa-xmark': parcel.status === 'CANCELLED',
+                'fa-box': parcel.status === 'PICKED_UP',
+                'fa-truck': parcel.status === 'OUT_FOR_DELIVERY'
+              }"></i>
+              {{ parcel.status.replace('_', ' ') }}
+            </span>
+          </td>
+          <td>{{ parcel.estimatedDeliveryDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ parcel.pickupLocation.address }}</td>
+          <td>{{ parcel.destinationLocation.address }}</td>
+          <td>{{ parcel.weight }} kg</td>
+          <td>${{ parcel.price }}</td>
+          <td><a [routerLink]="['/dashboard/parcels', parcel.id]" class="details-btn-modern"><i class="fa-solid fa-eye"></i> View Details</a></td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modern Pagination -->
+<div class="pagination-modern">
+  <button class="page-btn-modern">&lt; Previous</button>
+  <button class="page-btn-modern active">1</button>
+  <button class="page-btn-modern">2</button>
+  <button class="page-btn-modern">Next &gt;</button>
+</div>

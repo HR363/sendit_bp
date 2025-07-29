@@ -1,0 +1,109 @@
+<div class="faq-page-container">
+  <div class="faq-header">
+    <h1 class="faq-title">Frequently Asked Questions</h1>
+    <p class="faq-subtitle">Find answers to common questions about our shipping services</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="faq-controls">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fa-solid fa-search search-icon"></i>
+        <input 
+          #searchInput
+          type="text" 
+          class="search-input" 
+          placeholder="Search questions..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set(searchInput.value)"
+        />
+        <button 
+          *ngIf="searchQuery()" 
+          class="clear-search" 
+          (click)="clearSearch()"
+        >
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="category-filters">
+      <button 
+        *ngFor="let category of categories"
+        class="category-btn"
+        [ngClass]="{ 'active': selectedCategory() === category.id }"
+        (click)="selectCategory(category.id)"
+      >
+        <i [class]="category.icon"></i>
+        <span>{{ category.name }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- FAQ Results -->
+  <div class="faq-content">
+    <div class="faq-stats" *ngIf="filteredFAQs.length > 0">
+      <span class="faq-count">{{ filteredFAQs.length }} question{{ filteredFAQs.length !== 1 ? 's' : '' }} found</span>
+    </div>
+
+    <div class="faq-list" *ngIf="filteredFAQs.length > 0">
+      <div 
+        *ngFor="let faq of filteredFAQs" 
+        class="faq-item"
+        [ngClass]="{ 'expanded': isExpanded(faq.id) }"
+      >
+        <button 
+          class="faq-question"
+          (click)="toggleItem(faq.id)"
+        >
+          <span class="question-text">{{ faq.question }}</span>
+          <i 
+            class="fa-solid fa-chevron-down expand-icon"
+            [ngClass]="{ 'rotated': isExpanded(faq.id) }"
+          ></i>
+        </button>
+        <div 
+          class="faq-answer"
+          [ngClass]="{ 'show': isExpanded(faq.id) }"
+        >
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="filteredFAQs.length === 0">
+      <div class="no-results-icon">
+        <i class="fa-solid fa-search"></i>
+      </div>
+      <h3>No questions found</h3>
+      <p>Try adjusting your search terms or selecting a different category</p>
+      <button class="reset-btn" (click)="clearSearch(); selectCategory('all')">
+        Show all questions
+      </button>
+    </div>
+  </div>
+
+  <!-- Contact Support -->
+  <div class="contact-support">
+    <div class="support-card">
+      <div class="support-icon">
+        <i class="fa-solid fa-headset"></i>
+      </div>
+      <div class="support-content">
+        <h3>Still need help?</h3>
+        <p>Our customer support team is here to help you 24/7</p>
+        <div class="support-actions">
+          <button class="support-btn support-btn-primary">
+            <i class="fa-solid fa-comments"></i>
+            Live Chat
+          </button>
+          <button class="support-btn support-btn-secondary">
+            <i class="fa-solid fa-envelope"></i>
+            Email Support
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

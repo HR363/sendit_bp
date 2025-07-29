@@ -1,0 +1,92 @@
+<div class="manage-parcels-container">
+  <!-- Stats Cards -->
+  <div class="parcels-stats-cards">
+    <div class="parcels-stats-card">
+      <div class="stats-icon in-transit"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="stats-label">Parcels In Transit</div>
+      <div class="stats-value">{{ parcelsInTransit }}</div>
+      <div class="stats-desc">Currently moving towards destination</div>
+    </div>
+    <div class="parcels-stats-card">
+      <div class="stats-icon delivered"><i class="fa-solid fa-circle-check"></i></div>
+      <div class="stats-label">Delivered Today</div>
+      <div class="stats-value">{{ deliveredToday }}</div>
+      <div class="stats-desc">Successfully delivered to recipients</div>
+    </div>
+    <div class="parcels-stats-card">
+      <div class="stats-icon pending"><i class="fa-solid fa-box-open"></i></div>
+      <div class="stats-label">Pending Pickup</div>
+      <div class="stats-value">{{ pendingPickup }}</div>
+      <div class="stats-desc">Ready for courier collection</div>
+    </div>
+    <div class="parcels-stats-card">
+      <div class="stats-icon issues"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="stats-label">Issues Reported</div>
+      <div class="stats-value">0</div>
+      <div class="stats-desc">Parcels requiring immediate attention</div>
+    </div>
+  </div>
+
+  <!-- Manage Parcels Table -->
+  <div class="parcels-table-card improved">
+    <div class="parcels-table-header">
+      <input class="parcels-search" type="text" placeholder="Search by ID, Sender, or Receiver..." [(ngModel)]="search" />
+      <select class="parcels-filter" [(ngModel)]="selectedStatus">
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+      <input type="text" class="parcels-filter" placeholder="Search parcels..." [(ngModel)]="search" (ngModelChange)="onSearchChange()">
+      <button class="clear-filters-btn" type="button" (click)="search = ''; onSearchChange()"><i class="fa-solid fa-xmark"></i> Clear Filters</button>
+    </div>
+    <div class="parcels-table-wrapper">
+      <table class="parcels-table improved">
+        <thead>
+          <tr>
+            <th>Parcel ID</th>
+            <th>Sender Name</th>
+            <th>Receiver Name</th>
+            <th>Status</th>
+            <th>Last Update</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let parcel of filteredParcels$ | async">
+            <td>{{ parcel.id }}</td>
+            <td>{{ parcel.senderName }}</td>
+            <td>{{ parcel.receiverName }}</td>
+            <td>
+              <div class="status-pill">
+                <span class="status-badge" [ngClass]="parcel.status.toLowerCase()">
+                  <i class="fa-solid" [ngClass]="{
+                    'fa-truck-fast': parcel.status === 'IN_TRANSIT',
+                    'fa-circle-check': parcel.status === 'DELIVERED',
+                    'fa-clock': parcel.status === 'PENDING',
+                    'fa-pause': parcel.status === 'ON_HOLD',
+                    'fa-xmark': parcel.status === 'CANCELLED'
+                  }"></i> {{ parcel.status }}
+                </span>
+                <select class="status-dropdown improved" [ngModel]="parcel.status" (ngModelChange)="updateParcelStatus(parcel, $event)">
+                  <option value="PENDING">Pending</option>
+                  <option value="PICKED_UP">Picked Up</option>
+                  <option value="IN_TRANSIT">In Transit</option>
+                  <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
+            </td>
+            <td>{{ parcel.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <button class="action-icon" (click)="openDetails(parcel)"><i class="fa-solid fa-eye"></i></button>
+              <button class="action-icon"><i class="fa-solid fa-pen"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="parcels-pagination">
+      <span>Showing all results</span>
+    </div>
+  </div>
+  <app-admin-parcel-details-popup [parcel]="selectedParcel" [open]="showDetails" (click)="closeDetails()"></app-admin-parcel-details-popup>
+</div>

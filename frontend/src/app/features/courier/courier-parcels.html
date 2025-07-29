@@ -1,0 +1,62 @@
+<div class="manage-parcels-container">
+  <div class="parcels-table-card improved">
+    <div class="parcels-table-header">
+      <input class="parcels-search" type="text" placeholder="Search by ID, Sender, or Receiver..." [(ngModel)]="search" />
+      <select class="parcels-filter" [(ngModel)]="selectedStatus">
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+      <input type="text" class="parcels-filter" placeholder="Search parcels..." [(ngModel)]="search" (ngModelChange)="onSearchChange()">
+      <button type="button" class="clear-filters-btn" (click)="search = ''; onSearchChange()"><i class="fa-solid fa-xmark"></i> Clear Filters</button>
+    </div>
+    <div class="parcels-table-wrapper">
+      <table class="parcels-table improved">
+        <thead>
+          <tr>
+            <th>Parcel ID</th>
+            <th>Sender Name</th>
+            <th>Receiver Name</th>
+            <th>Status</th>
+            <th>Last Update</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let parcel of filteredParcels$ | async">
+            <td>{{ parcel.id }}</td>
+            <td>{{ parcel.senderName }}</td>
+            <td>{{ parcel.receiverName }}</td>
+            <td>
+              <div class="status-pill">
+                <span class="status-badge" [ngClass]="parcel.status.toLowerCase()">
+                  <i class="fa-solid" [ngClass]="{
+                    'fa-truck-fast': parcel.status === 'IN_TRANSIT',
+                    'fa-circle-check': parcel.status === 'DELIVERED',
+                    'fa-clock': parcel.status === 'PENDING',
+                    'fa-pause': parcel.status === 'ON_HOLD',
+                    'fa-xmark': parcel.status === 'CANCELLED'
+                  }"></i> {{ parcel.status }}
+                </span>
+                <select class="status-dropdown improved" [ngModel]="parcel.status" (ngModelChange)="updateStatus(parcel, $event)">
+                  <option value="PENDING">Pending</option>
+                  <option value="PICKED_UP">Picked Up</option>
+                  <option value="IN_TRANSIT">In Transit</option>
+                  <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
+            </td>
+            <td>{{ parcel.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <button class="action-icon" (click)="viewParcel(parcel)"><i class="fa-solid fa-eye"></i></button>
+              <button class="action-icon"><i class="fa-solid fa-pen"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="parcels-pagination">
+      <span>Showing all results</span>
+    </div>
+  </div>
+</div>

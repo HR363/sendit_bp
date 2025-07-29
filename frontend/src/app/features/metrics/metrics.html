@@ -1,0 +1,128 @@
+<div class="metrics-container">
+  <h1 class="metrics-title">Parcel Metrics & Insights</h1>
+  <p class="metrics-subtitle">A visual overview of your parcel activity, status, and trends</p>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="flex justify-center items-center py-12">
+    <div class="text-lg text-gray-600">Loading metrics...</div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="text-red-800">{{ error() }}</div>
+    <button (click)="loadMetrics()" class="mt-2 text-red-600 hover:text-red-800 underline">Try again</button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div *ngIf="metrics() && !loading()" class="metrics-stats-cards">
+    <div class="metrics-card sent">
+      <div class="icon"><i class="fa-solid fa-paper-plane"></i></div>
+      <div class="value">{{ metrics()!.totalSentParcels }}</div>
+      <div class="label">Total Sent Parcels</div>
+      <div class="desc">Since account creation</div>
+    </div>
+    <div class="metrics-card received">
+      <div class="icon"><i class="fa-solid fa-inbox"></i></div>
+      <div class="value">{{ metrics()!.totalReceivedParcels }}</div>
+      <div class="label">Total Received Parcels</div>
+      <div class="desc">All time</div>
+    </div>
+    <div class="metrics-card in-transit">
+      <div class="icon"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="value">{{ metrics()!.parcelsInTransit }}</div>
+      <div class="label">Parcels In Transit</div>
+      <div class="desc">Currently on the way</div>
+    </div>
+    <div class="metrics-card pending">
+      <div class="icon"><i class="fa-solid fa-clock"></i></div>
+      <div class="value">{{ metrics()!.parcelsPending }}</div>
+      <div class="label">Pending Parcels</div>
+      <div class="desc">Awaiting pickup</div>
+    </div>
+  </div>
+
+  <!-- Main Content: Activity & Chart -->
+  <div *ngIf="metrics() && !loading()" class="metrics-main-content">
+    <div class="metrics-activity">
+      <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
+      <ul class="activity-list">
+        <li *ngFor="let activity of metrics()!.recentActivity">
+          Parcel {{ activity.trackingNumber }}: {{ activity.status.replace('_', ' ') }}
+          <span class="time">{{ getTimeAgo(activity.createdAt) }}</span>
+        </li>
+        <li *ngIf="metrics()!.recentActivity.length === 0" class="text-gray-500 italic">
+          No recent activity found
+        </li>
+      </ul>
+      <h3 class="section-title mt-6"><i class="fa-solid fa-truck-arrow-right"></i> Recent Pickup Requests</h3>
+      <ul class="activity-list">
+        <li *ngFor="let pickup of pickupHistory()">
+          Pickup Request: {{ pickup.parcelDetails }} at {{ pickup.pickupLocation }} - {{ pickup.status }}
+          <span class="time">{{ getTimeAgo(pickup.createdAt) }}</span>
+        </li>
+        <li *ngIf="(pickupHistory() || []).length === 0" class="text-gray-500 italic">
+          No recent pickup requests found
+        </li>
+      </ul>
+    </div>
+    <div class="metrics-chart">
+      <h2 class="section-title"><i class="fa-solid fa-chart-pie"></i> Parcel Status Distribution</h2>
+      <!-- Real data chart -->
+      <div class="donut-chart">
+        <div class="donut-center">
+          <span class="donut-value">{{ metrics()!.statusDistribution.total }}</span>
+          <span class="donut-label">Total</span>
+        </div>
+        <div class="status-bars">
+          <div class="status-bar">
+            <div class="status-info">
+              <span class="legend-dot delivered"></span>
+              <span>Delivered: {{ metrics()!.statusDistribution.delivered }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar delivered" [style.width.%]="calculateChartData(metrics()!.statusDistribution).delivered"></div>
+            </div>
+          </div>
+          <div class="status-bar">
+            <div class="status-info">
+              <span class="legend-dot in-transit"></span>
+              <span>In Transit: {{ metrics()!.statusDistribution.inTransit }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar in-transit" [style.width.%]="calculateChartData(metrics()!.statusDistribution).inTransit"></div>
+            </div>
+          </div>
+          <div class="status-bar">
+            <div class="status-info">
+              <span class="legend-dot pending"></span>
+              <span>Pending: {{ metrics()!.statusDistribution.pending }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar pending" [style.width.%]="calculateChartData(metrics()!.statusDistribution).pending"></div>
+            </div>
+          </div>
+          <div class="status-bar">
+            <div class="status-info">
+              <span class="legend-dot failed"></span>
+              <span>Cancelled: {{ metrics()!.statusDistribution.cancelled }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar failed" [style.width.%]="calculateChartData(metrics()!.statusDistribution).cancelled"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="metrics-quick-actions">
+    <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
+    <div class="quick-actions-list">
+      <a routerLink="/parcels/create" class="quick-action"><i class="fa-solid fa-plus"></i> Create New Parcel</a>
+      <a routerLink="/parcels/track" class="quick-action"><i class="fa-solid fa-location-dot"></i> Track Existing Parcel</a>
+      <a routerLink="/dashboard/faq" class="quick-action"><i class="fa-solid fa-headset"></i> Contact Support</a>
+      <a routerLink="/dashboard/reports" class="quick-action"><i class="fa-solid fa-file-lines"></i> View Reports</a>
+    </div>
+  </div>
+</div> 

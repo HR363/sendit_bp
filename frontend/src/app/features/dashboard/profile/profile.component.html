@@ -1,0 +1,258 @@
+<div class="profile-page-container">
+  <h1 class="profile-title">Manage Your Profile</h1>
+  <div class="profile-main-grid">
+    <!-- Left: User Info and Recent Shipments -->
+    <div class="profile-main-left">
+      <div class="profile-card">
+        <ng-container *ngIf="!editMode; else editProfileForm">
+          <ng-container *ngIf="(user$ | async) as user">
+            <div class="profile-photo-section">
+              <img *ngIf="user.photo; else placeholder" [src]="user.photo" class="profile-photo" alt="Profile photo" />
+              <ng-template #placeholder>
+                <div class="profile-photo-placeholder">{{ user.name[0] }}</div>
+              </ng-template>
+              <label class="camera-icon" for="photoInputView"><i class="fa-solid fa-camera"></i></label>
+              <input id="photoInputView" type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)" />
+            </div>
+            <div class="profile-name">{{ user.name }}</div>
+            <a href="#" class="profile-edit-link" (click)="$event.preventDefault(); openEditProfile(user)">Edit Account Photo</a>
+            <div class="profile-info-grid">
+              <div>
+                <div class="profile-label">Full Name</div>
+                <div class="profile-value">{{ user.name }}</div>
+              </div>
+              <div>
+                <div class="profile-label">Email Address</div>
+                <div class="profile-value">{{ user.email }}</div>
+              </div>
+              <div>
+                <div class="profile-label">Phone Number</div>
+                <div class="profile-value">{{ user.phone }}</div>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button class="profile-btn profile-btn-outline" (click)="openChangePassword()">Change Password</button>
+              <button class="profile-btn profile-btn-orange" (click)="openEditProfile(user)">Update Details</button>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #editProfileForm>
+          <form (submit)="$event.preventDefault(); saveProfile()">
+            <div class="profile-photo-section">
+              <img *ngIf="photoPreview(); else editPlaceholder" [src]="photoPreview()" class="profile-photo" alt="Profile photo preview" />
+              <ng-template #editPlaceholder>
+                <div class="profile-photo-placeholder">{{ editForm().name?.[0] || 'U' }}</div>
+              </ng-template>
+              <label class="camera-icon" for="photoInput"><i class="fa-solid fa-camera"></i></label>
+              <input id="photoInput" type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)" />
+            </div>
+            <div class="profile-name">
+              <input #nameInput class="profile-edit-input" type="text" [value]="editForm().name" (input)="onEditInputChange('name', nameInput.value)" placeholder="Full Name" required />
+            </div>
+            <div class="profile-info-grid">
+              <div>
+                <div class="profile-label">Full Name</div>
+                <input #nameInput2 class="profile-edit-input" type="text" [value]="editForm().name" (input)="onEditInputChange('name', nameInput2.value)" required />
+              </div>
+              <div>
+                <div class="profile-label">Email Address</div>
+                <input #emailInput class="profile-edit-input" type="email" [value]="editForm().email" (input)="onEditInputChange('email', emailInput.value)" required />
+              </div>
+              <div>
+                <div class="profile-label">Phone Number</div>
+                <input #phoneInput class="profile-edit-input" type="tel" [value]="editForm().phone" (input)="onEditInputChange('phone', phoneInput.value)" required />
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button type="button" class="profile-btn profile-btn-outline" (click)="closeEditProfile()">Cancel</button>
+              <button type="submit" class="profile-btn profile-btn-orange">Save</button>
+            </div>
+          </form>
+        </ng-template>
+      </div>
+      <div class="profile-card profile-shipments">
+        <div class="profile-card-title-row">
+          <div class="profile-card-title">Recent Shipments</div>
+          <button class="profile-card-link" (click)="toggleShipmentsView()">
+            {{ showAllShipments() ? 'Show Less' : 'View All' }}
+          </button>
+        </div>
+        <div class="profile-shipments-list">
+          <div *ngFor="let s of getDisplayedShipments()" class="shipment-row">
+            <div class="shipment-icon"><i class="fa-solid fa-truck"></i></div>
+            <div class="shipment-info">
+              <div class="shipment-title">{{ s.title }}</div>
+              <div class="shipment-meta">Tracking ID: {{ s.trackingId }}</div>
+            </div>
+            <div class="shipment-status" [ngClass]="s.status.toLowerCase().replace(' ', '-')">{{ s.status }}</div>
+            <div class="shipment-date">{{ s.date }}</div>
+          </div>
+          <div *ngIf="getDisplayedShipments().length === 0" class="no-shipments">
+            <i class="fa-solid fa-box-open"></i>
+            <p>No shipments found</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Profile Completeness, Payment, Notifications -->
+    <div class="profile-main-right">
+      <div class="profile-card profile-completeness">
+        <div class="profile-label">Profile Completeness</div>
+        <div class="profile-progress-bar" *ngIf="(user$ | async) as user">
+          <div class="profile-progress" [style.width]="user.profileComplete + '%'" ></div>
+        </div>
+        <div class="profile-progress-text" *ngIf="(user$ | async) as user">Your profile is {{ user.profileComplete }}% complete. Add more details to enhance your experience.</div>
+        <button class="profile-btn profile-btn-orange w-full">Complete Profile</button>
+      </div>
+      <div class="profile-card profile-payments">
+        <div class="profile-card-title-row">
+          <div class="profile-card-title">Payment Methods</div>
+          <button class="profile-card-link" (click)="openAddPayment()">Add New</button>
+        </div>
+        <ng-container *ngIf="!paymentEditMode(); else addPaymentForm">
+          <div class="profile-payments-list">
+            <div *ngFor="let p of paymentMethods()" class="payment-row">
+              <div class="payment-type" [ngClass]="p.type.toLowerCase()">{{ p.type }}</div>
+              <div class="payment-last4">**** {{ p.last4 }}</div>
+              <div class="payment-expires">Expires {{ p.expires }}</div>
+              <button class="payment-remove" (click)="removePaymentMethod(p.id)">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+            <div *ngIf="paymentMethods().length === 0" class="no-payments">
+              <i class="fa-solid fa-credit-card"></i>
+              <p>No payment methods added</p>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #addPaymentForm>
+          <form (submit)="$event.preventDefault(); addPaymentMethod()">
+            <div class="payment-form-grid">
+              <div>
+                <div class="profile-label">Card Type</div>
+                <select #typeInput class="profile-edit-input" (change)="onPaymentInputChange('type', typeInput.value)">
+                  <option value="Visa">Visa</option>
+                  <option value="Mastercard">Mastercard</option>
+                  <option value="Bank">Bank Transfer</option>
+                </select>
+              </div>
+              <div>
+                <div class="profile-label">Card Number</div>
+                <input #numberInput class="profile-edit-input" type="text" (input)="onPaymentInputChange('number', numberInput.value)" placeholder="1234 5678 9012 3456" />
+              </div>
+              <div>
+                <div class="profile-label">Expiry Date</div>
+                <input #expiresInput class="profile-edit-input" type="text" (input)="onPaymentInputChange('expires', expiresInput.value)" placeholder="MM/YY" />
+              </div>
+              <div>
+                <div class="profile-label">CVV</div>
+                <input #cvvInput class="profile-edit-input" type="text" (input)="onPaymentInputChange('cvv', cvvInput.value)" placeholder="123" />
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button type="button" class="profile-btn profile-btn-outline" (click)="closeAddPayment()">Cancel</button>
+              <button type="submit" class="profile-btn profile-btn-orange">Add Payment Method</button>
+            </div>
+          </form>
+        </ng-template>
+      </div>
+      <div class="profile-card profile-notifications">
+        <div class="profile-card-title">Notification Preferences</div>
+        <div class="notification-row">
+          <div class="notification-label">SMS Notifications</div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifications().sms" (change)="toggleNotification('sms')" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notification-row">
+          <div class="notification-label">Email Notifications</div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifications().email" (change)="toggleNotification('email')" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div *ngIf="changePasswordMode" class="modal-overlay" (click)="closeChangePassword()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Change Password</h3>
+        <button class="modal-close" (click)="closeChangePassword()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <form (submit)="$event.preventDefault(); changePassword()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <div class="password-input-container">
+              <input 
+                id="currentPassword"
+                [type]="showCurrentPassword ? 'text' : 'password'" 
+                class="form-input password-input" 
+                (input)="onPasswordInputChange('currentPassword', ($any($event.target).value || ''))"
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle-btn" 
+                (click)="togglePasswordVisibility('currentPassword')"
+                [attr.aria-label]="showCurrentPassword ? 'Hide password' : 'Show password'"
+              >
+                <i class="fa-solid" [class.fa-eye]="!showCurrentPassword" [class.fa-eye-slash]="showCurrentPassword"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <div class="password-input-container">
+              <input 
+                id="newPassword"
+                [type]="showNewPassword ? 'text' : 'password'" 
+                class="form-input password-input" 
+                (input)="onPasswordInputChange('newPassword', ($any($event.target).value || ''))"
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle-btn" 
+                (click)="togglePasswordVisibility('newPassword')"
+                [attr.aria-label]="showNewPassword ? 'Hide password' : 'Show password'"
+              >
+                <i class="fa-solid" [class.fa-eye]="!showNewPassword" [class.fa-eye-slash]="showNewPassword"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <div class="password-input-container">
+              <input 
+                id="confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                class="form-input password-input" 
+                (input)="onPasswordInputChange('confirmPassword', ($any($event.target).value || ''))"
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle-btn" 
+                (click)="togglePasswordVisibility('confirmPassword')"
+                [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+              >
+                <i class="fa-solid" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="profile-btn profile-btn-outline" (click)="closeChangePassword()">Cancel</button>
+          <button type="submit" class="profile-btn profile-btn-orange">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

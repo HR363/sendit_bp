@@ -1,0 +1,50 @@
+<div class="manage-users-container">
+  <h1 class="manage-users-title">Manage Users</h1>
+  <div class="users-controls">
+    <label for="role-filter">Filter by Role:</label>
+    <select id="role-filter" [(ngModel)]="selectedRole" (ngModelChange)="onRoleFilterChange()">
+      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+    </select>
+  </div>
+  <div class="users-table-card">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers$ | async">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone }}</td>
+          <td>
+            <div class="role-dropdown-container">
+              <select class="role-dropdown" [ngModel]="user.role" (ngModelChange)="updateUserRole(user, $event)">
+                <option value="USER">User</option>
+                <option value="COURIER_AGENT">Courier</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+              <div class="role-indicator" *ngIf="user.role === 'ADMIN'">
+                <i class="fa-solid fa-crown" title="Admin User"></i>
+              </div>
+              <div class="role-indicator" *ngIf="user.role === 'COURIER_AGENT'">
+                <i class="fa-solid fa-truck" title="Courier Agent"></i>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="user.isActive ? 'active' : 'inactive'">{{ user.isActive ? 'Active' : 'Inactive' }}</span>
+            <button type="button" class="toggle-status-btn" (click)="updateUserStatus(user, !user.isActive)">
+              {{ user.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

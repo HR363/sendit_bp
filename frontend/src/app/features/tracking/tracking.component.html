@@ -1,0 +1,175 @@
+<div class="tracking-container">
+  <div class="tracking-header">
+    <h1 class="tracking-title">
+      <i class="fa-solid fa-location-dot"></i>
+      Track Your Parcel
+    </h1>
+    <p class="tracking-subtitle">Enter your tracking number to get real-time updates on your delivery</p>
+  </div>
+
+  <!-- Tracking Form -->
+  <div class="tracking-form-container">
+    <div class="tracking-form">
+      <div class="input-group">
+        <input 
+          type="text" 
+          [(ngModel)]="trackingNumber" 
+          placeholder="Enter tracking number (e.g., TRK12345678)"
+          class="tracking-input"
+          (keyup.enter)="trackParcel()"
+        />
+        <button 
+          (click)="trackParcel()" 
+          class="track-button"
+          [disabled]="isLoading"
+        >
+          <i class="fa-solid fa-search" *ngIf="!isLoading"></i>
+          <i class="fa-solid fa-spinner fa-spin" *ngIf="isLoading"></i>
+          {{ isLoading ? 'Tracking...' : 'Track Parcel' }}
+        </button>
+      </div>
+      
+      <button 
+        *ngIf="trackingData" 
+        (click)="clearTracking()" 
+        class="clear-button"
+      >
+        <i class="fa-solid fa-times"></i>
+        Clear
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <i class="fa-solid fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+    <p>Searching for your parcel...</p>
+  </div>
+
+  <!-- Tracking Results -->
+  <div *ngIf="trackingData && !isLoading" class="tracking-results">
+    <!-- Parcel Info Card -->
+    <div class="tracking-card">
+      <div class="card-header">
+        <h2>Parcel Information</h2>
+        <span class="tracking-number">{{ trackingData.trackingNumber }}</span>
+      </div>
+      
+      <div class="tracking-status-section">
+        <div class="status-badge" [ngClass]="getStatusClass(trackingData.status)">
+          <i class="fa-solid" [ngClass]="{
+            'fa-clock': trackingData.status === 'PENDING',
+            'fa-box': trackingData.status === 'PICKED_UP',
+            'fa-truck-fast': trackingData.status === 'IN_TRANSIT',
+            'fa-truck': trackingData.status === 'OUT_FOR_DELIVERY',
+            'fa-circle-check': trackingData.status === 'DELIVERED'
+          }"></i>
+          {{ getStatusText(trackingData.status) }}
+        </div>
+        
+        <div class="eta-info" *ngIf="getEstimatedTime()">
+          <i class="fa-solid fa-clock"></i>
+          <span>Estimated arrival: {{ getEstimatedTime() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Details -->
+    <div class="tracking-card">
+      <h3>Location Details</h3>
+      <div class="location-grid">
+        <div class="location-item pickup">
+          <div class="location-icon">
+            <i class="fa-solid fa-box"></i>
+          </div>
+          <div class="location-info">
+            <h4>Pickup Location</h4>
+            <p>{{ trackingData.pickupLocation.address }}</p>
+            <small>{{ trackingData.pickupLocation.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
+          </div>
+        </div>
+
+        <div class="location-item destination">
+          <div class="location-icon">
+            <i class="fa-solid fa-flag-checkered"></i>
+          </div>
+          <div class="location-info">
+            <h4>Destination</h4>
+            <p>{{ trackingData.destinationLocation.address }}</p>
+            <small>Estimated: {{ trackingData.estimatedDelivery | date:'MMM dd, yyyy' }}</small>
+          </div>
+        </div>
+
+        <div class="location-item current" *ngIf="trackingData.currentLocation">
+          <div class="location-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="location-info">
+            <h4>Current Location</h4>
+            <p>{{ trackingData.currentLocation.address }}</p>
+            <small>{{ trackingData.currentLocation.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
+          </div>
+        </div>
+
+        <div class="location-item courier" *ngIf="trackingData.courierLocation">
+          <div class="location-icon">
+            <i class="fa-solid fa-truck"></i>
+          </div>
+          <div class="location-info">
+            <h4>Courier Location</h4>
+            <p>{{ trackingData.courierLocation.address }}</p>
+            <small>{{ trackingData.courierLocation.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking Map -->
+    <div class="tracking-card" *ngIf="showMap">
+      <div class="card-header">
+        <h2>Tracking Map</h2>
+        <button class="fullscreen-btn" (click)="toggleFullscreen()" title="Toggle Fullscreen">
+          <i class="fa-solid" [ngClass]="isFullscreen ? 'fa-compress' : 'fa-expand'"></i>
+        </button>
+      </div>
+      <div class="map-container" [class.fullscreen]="isFullscreen">
+        <div id="public-tracking-map" class="tracking-map"></div>
+      </div>
+    </div>
+
+    <!-- Status History -->
+    <div class="tracking-card" *ngIf="trackingData.statusHistory?.length">
+      <h3>Status History</h3>
+      <div class="status-timeline">
+        <div 
+          *ngFor="let status of trackingData.statusHistory" 
+          class="status-item"
+        >
+          <div class="status-dot"></div>
+          <div class="status-content">
+            <div class="status-title">{{ status.status.replace('_', ' ') }}</div>
+            <div class="status-date">{{ status.createdAt | date:'MMM dd, yyyy HH:mm' }}</div>
+            <div class="status-location" *ngIf="status.location">{{ status.location }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results State -->
+  <div *ngIf="!trackingData && !isLoading && !error" class="no-results">
+    <div class="no-results-icon">
+      <i class="fa-solid fa-search"></i>
+    </div>
+    <h3>Track Your Parcel</h3>
+    <p>Enter your tracking number above to get started</p>
+  </div>
+</div> 

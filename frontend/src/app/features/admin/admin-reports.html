@@ -1,0 +1,39 @@
+<div class="admin-reports-container">
+  <h1 class="reports-title">Reports: Complaints & Feedback</h1>
+  <table class="reports-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>User</th>
+        <th>Message</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let report of reports">
+        <td>{{ report.id }}</td>
+        <td>
+          <span [ngClass]="{'complaint': report.type === 'Complaint', 'feedback': report.type === 'Feedback'}">
+            {{ report.type }}
+          </span>
+        </td>
+        <td>{{ report.user }}</td>
+        <td>{{ report.message }}</td>
+        <td>{{ report.date }}</td>
+        <td>
+          <select [ngModel]="report.status" (ngModelChange)="setStatus(report, $event)">
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </td>
+        <td>
+          <button class="resolve-btn" [disabled]="report.status === 'Resolved'" (click)="setStatus(report, 'Resolved')">Mark as Resolved</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

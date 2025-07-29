@@ -1,0 +1,133 @@
+<div class="dashboard-home-container">
+  <div class="welcome-section">
+    <div class="welcome-greeting">
+      <span class="wave-emoji">👋</span>
+      <h1 class="welcome-title">Welcome back, {{ user?.firstName || 'User' }}!</h1>
+    </div>
+    <p class="welcome-message">Ready to send something amazing today?</p>
+  </div>
+
+  <div class="quick-actions-title">Quick Actions</div>
+  <div class="quick-actions-row">
+    <button type="button" class="action-card" (click)="openPickupModal()">
+      <i class="fa-solid fa-plus action-icon"></i>
+      <span class="action-label">Request Pickup</span>
+    </button>
+    <a routerLink="/parcels/track" class="action-card">
+      <i class="fa-solid fa-location-dot action-icon"></i>
+      <span class="action-label">Track Parcel</span>
+    </a>
+    <a routerLink="/dashboard/metrics" class="action-card">
+      <i class="fa-solid fa-chart-pie action-icon"></i>
+      <span class="action-label">View Metrics</span>
+    </a>
+  </div>
+
+  <div class="announcements-card">
+    <div class="announcements-header">
+      <i class="fa-solid fa-bullhorn announcements-icon"></i>
+      <h2 class="announcements-title">Announcements</h2>
+    </div>
+    <p class="announcements-message">No new announcements at this time. <span class="announcements-tip">Tip: You can schedule pickups right from your dashboard!</span></p>
+  </div>
+
+  <!-- Shipping Steps Illustration Section -->
+  <section class="shipping-steps-section">
+    <h2 class="shipping-steps-title">Your Parcel's Journey, <span class='highlight-modern'>Step by Step</span></h2>
+    <div class="shipping-steps-timeline">
+      <!-- Step 1 -->
+      <div class="shipping-step left">
+        <div class="step-img"><img src="/assets/drop_parcel.png" alt="Drop Parcel" /></div>
+        <div class="step-desc">
+          <h3>Drop Off at Our Office</h3>
+          <p>Bring your parcel to the nearest SendIt office and let our friendly staff handle the rest. We'll get your delivery started in no time!</p>
+        </div>
+      </div>
+      <div class="wavy-line left-arrow"></div>
+      <!-- Step 2 -->
+      <div class="shipping-step right">
+        <div class="step-img"><img src="/assets/request_pickup.png" alt="Request Pickup" /></div>
+        <div class="step-desc">
+          <h3>Request a Pickup</h3>
+          <p>Can't make it to us? Request a pickup and our courier will collect your parcel right from your doorstep, hassle-free.</p>
+        </div>
+      </div>
+      <div class="wavy-line right-arrow"></div>
+      <!-- Step 3 -->
+      <div class="shipping-step left">
+        <div class="step-img"><img src="/assets/track_parcel.png" alt="Track Parcel" /></div>
+        <div class="step-desc">
+          <h3>Track While In Transit</h3>
+          <p>Follow your parcel's journey in real-time with our easy-to-use tracking system. Stay updated every step of the way.</p>
+        </div>
+      </div>
+      <div class="wavy-line left-arrow"></div>
+      <!-- Step 4 -->
+      <div class="shipping-step right">
+        <div class="step-img"><img src="/assets/delivered.png" alt="Parcel Delivered" /></div>
+        <div class="step-desc">
+          <h3>Parcel Delivered</h3>
+          <p>Once your parcel arrives, both you and the recipient get instant notifications. Fast, secure, and reliable delivery—every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Animated Steps Section (scroll-driven) -->
+  <section class="scroll-steps-section">
+    <div class="scroll-steps-wrapper">
+      <div class="scroll-step" *ngFor="let step of steps; let i = index" [class.active]="currentStep() === i">
+        <div class="scroll-step-text">
+          <h1><span>{{ step.title }}</span><br><span class="highlight {{step.highlightClass}}">{{ step.highlight }}</span></h1>
+          <p>{{ step.desc }}</p>
+        </div>
+        <img class="scroll-step-img" [src]="step.img" [alt]="step.alt" />
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Request Pickup Modal -->
+<div *ngIf="showPickupModal()" class="pickup-modal-overlay">
+  <div class="pickup-modal">
+    <button class="pickup-modal-close" (click)="closePickupModal()" aria-label="Close">&times;</button>
+    <ng-container *ngIf="!pickupSuccess(); else pickupSuccessBlock">
+      <h2 class="pickup-modal-title">Request a Pickup</h2>
+      <form [formGroup]="pickupFormGroup" (ngSubmit)="submitPickupRequest()" class="pickup-form">
+        <div class="pickup-form-group">
+          <label>Sender Name</label>
+          <input type="text" formControlName="senderName" required />
+        </div>
+        <div class="pickup-form-group">
+          <label>Phone Number</label>
+          <input type="tel" formControlName="senderPhone" required />
+        </div>
+        <div class="pickup-form-group">
+          <label>Pickup Address</label>
+          <input type="text" formControlName="pickupAddress" required />
+        </div>
+        <div class="pickup-form-group">
+          <label>Parcel Description</label>
+          <textarea formControlName="parcelDescription" rows="2" required></textarea>
+        </div>
+        <div class="pickup-form-group">
+          <label>Pickup Date</label>
+          <input type="date" formControlName="pickupDate" required />
+        </div>
+        <div class="pickup-form-group">
+          <label>Special Instructions <span class="optional">(Optional)</span></label>
+          <textarea formControlName="specialInstructions" rows="2"></textarea>
+        </div>
+        <button type="submit" class="pickup-submit-btn" [disabled]="pickupFormGroup.invalid">Request Pickup</button>
+      </form>
+    </ng-container>
+    <ng-template #pickupSuccessBlock>
+      <div class="pickup-success">
+        <div class="pickup-success-icon">🎉</div>
+        <div class="pickup-success-title">Pickup Requested!</div>
+        <div class="pickup-success-msg">Your pickup request has been received. Our courier will contact you soon.<br>Thank you for choosing SendIt!</div>
+        <button class="pickup-submit-btn" (click)="closePickupModal()">Close</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

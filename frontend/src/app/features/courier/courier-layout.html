@@ -1,0 +1,19 @@
+<div class="courier-dashboard-layout">
+  <aside class="courier-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-text">
+        <span class="send">Send</span><span class="it">It</span>
+      </span>
+      <span class="logo-dot"> Courier</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" routerLink="/courier/dashboard" routerLinkActive="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a class="nav-link" routerLink="/courier/parcels" routerLinkActive="active"><i class="fa-solid fa-box"></i> Manage Parcels</a>
+      <a class="nav-link" routerLink="/courier/parcels/create" routerLinkActive="active"><i class="fa-solid fa-plus"></i> Create Parcel</a>
+    </nav>
+    <button class="signout-btn" (click)="signOut()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+  </aside>
+  <main class="courier-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

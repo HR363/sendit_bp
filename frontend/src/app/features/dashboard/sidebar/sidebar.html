@@ -1,0 +1,96 @@
+<nav class="flex flex-col h-full w-64 bg-white border-r border-orange-100 shadow-lg py-6 px-4">
+  <!-- Logo/Title -->
+  <div class="flex items-center mb-10 px-2">
+    <span class="logo-text" style="font-size:2.2rem;font-weight:900;line-height:1;">
+      <span style="color:#F97316;">Send</span><span style="color:#222;font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:900;letter-spacing:-1px;">It</span>
+    </span>
+  </div>
+  <!-- Nav Links -->
+  <ul class="flex-1 flex flex-col gap-2">
+    <li>
+      <a routerLink="/home" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+        <i class="fa-solid fa-house"></i> Home
+      </a>
+    </li>
+    <!-- Dashboard: visible to all roles -->
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </a>
+    </li>
+    <!-- Admin links -->
+    <ng-container *ngIf="(userRole$ | async) === 'ADMIN'">
+      <li>
+        <a routerLink="/admin/users" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-users"></i> Manage Users
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/parcels" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-box"></i> Manage Parcels
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/parcels/create" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-plus"></i> Create Delivery Order
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/reports" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-file-lines"></i> Reports
+        </a>
+      </li>
+    </ng-container>
+    <!-- Courier links -->
+    <ng-container *ngIf="(userRole$ | async) === 'COURIER_AGENT'">
+      <li>
+        <a routerLink="/courier/dashboard" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-house"></i> Courier Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/courier/parcels" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-box"></i> My Deliveries
+        </a>
+      </li>
+      <li>
+        <a routerLink="/courier/parcels/create" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-plus"></i> Create Parcel
+        </a>
+      </li>
+    </ng-container>
+    <!-- User links (default) -->
+    <ng-container *ngIf="(userRole$ | async) === 'USER'">
+      <li>
+        <a routerLink="/parcels" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-boxes-stacked"></i> My Parcels
+        </a>
+      </li>
+      <li>
+        <a routerLink="/parcels/create" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-plus"></i> Request Pickup
+        </a>
+      </li>
+      <li>
+        <a routerLink="/parcels/track" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+          <i class="fa-solid fa-location-dot"></i> Track Parcel
+        </a>
+      </li>
+    </ng-container>
+    <!-- Profile link: visible to all roles -->
+    <li>
+      <a routerLink="/profile" routerLinkActive="bg-orange-50 text-orange-500 font-semibold" class="flex items-center gap-3 px-4 py-3 rounded transition hover:bg-orange-50">
+        <i class="fa-solid fa-user"></i> My Profile
+      </a>
+    </li>
+  </ul>
+  <!-- Bottom: Logout & Avatar -->
+  <div class="mt-10 flex flex-col items-center gap-4">
+    <button class="flex items-center gap-2 px-4 py-2 rounded bg-orange-100 text-orange-600 font-semibold hover:bg-orange-200 transition" (click)="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+    <div class="w-12 h-12 rounded-full bg-orange-200 flex items-center justify-center text-xl text-orange-700">
+      <i class="fa-solid fa-user"></i>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,19 @@
+<section class="section">
+  <div class="section-wrapper">
+    <div class="content-wrapper">
+      <div class="content" *ngFor="let step of steps" @fadeIn>
+        <div class="mobile-visual">
+          <img class="card-img" [src]="step.img" [alt]="step.alt" />
+        </div>
+        <div class="meta">
+          <h2 class="headline">
+            <span class="text-highlight">{{ step.title }}</span>
+          </h2>
+          <p class="desc">
+            {{ step.desc }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> 

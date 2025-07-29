@@ -1,0 +1,106 @@
+<div class="courier-dashboard-container modern full-height">
+  <div class="dashboard-header-row">
+    <div class="dashboard-header-icon"><i class="fa-solid fa-truck-fast"></i></div>
+    <div>
+      <h1 class="dashboard-title">Welcome, Courier!</h1>
+      <p class="dashboard-subtitle">Ready to deliver excellence today?</p>
+    </div>
+  </div>
+  <div class="dashboard-tip-card">
+    <i class="fa-solid fa-lightbulb"></i>
+    <span class="tip-label">Pro Tip</span>
+    <span class="tip-text">Every parcel is a promise. Make your deliveries memorable—double-check addresses and keep your phone charged!</span>
+  </div>
+  <div class="dashboard-summary-row">
+    <div class="summary-card orange">
+      <div class="summary-icon"><i class="fa-solid fa-box"></i></div>
+      <div class="summary-label">Pending Pickups</div>
+      <div class="summary-value">{{ totalPendingPickups }}</div>
+    </div>
+    <div class="summary-card green">
+      <div class="summary-icon"><i class="fa-solid fa-truck"></i></div>
+      <div class="summary-label">Pending Deliveries</div>
+      <div class="summary-value">{{ (pendingDeliveries$ | async)?.length || 0 }}</div>
+    </div>
+    <div class="summary-card blue">
+      <div class="summary-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div class="summary-label">Completed Today</div>
+      <div class="summary-value">{{ completedToday }}</div>
+    </div>
+  </div>
+  <div class="dashboard-modern-tabs">
+    <button [class.active]="tab === 'pickups'" (click)="tab = 'pickups'">
+      <i class="fa-solid fa-box"></i> Pending Pickups
+    </button>
+    <button [class.active]="tab === 'deliveries'" (click)="tab = 'deliveries'">
+      <i class="fa-solid fa-truck"></i> Pending Deliveries
+    </button>
+  </div>
+  <div *ngIf="tab === 'pickups'">
+    <div class="tab-card">
+      <div class="tab-title-row orange"><i class="fa-solid fa-box"></i> <span>Pending Pickups</span></div>
+      <div class="tab-subtitle">Items waiting to be collected from customers</div>
+      <div class="parcel-list">
+        <div class="parcel-item" *ngFor="let pickup of pendingPickups$ | async; let i = index">
+          <div class="parcel-avatar">{{ pickup.receiverName.charAt(0) }}</div>
+          <div class="parcel-info">
+            <div class="parcel-id">{{ pickup.id }} <span class="priority high" *ngIf="i === 0">high</span><span class="priority medium" *ngIf="i === 1">medium</span></div>
+            <div class="parcel-meta"><i class="fa-solid fa-location-dot"></i> {{ pickup.pickupLocation.address }} ({{ pickup.receiverName }}) <i class="fa-regular fa-clock"></i> {{ pickup.estimatedDeliveryDate | date:'shortTime' }}</div>
+          </div>
+          <button class="parcel-action orange" [disabled]="pickup.status === 'PICKED_UP'" (click)="markPickupCompleted(pickup)">
+            {{ pickup.status === 'PICKED_UP' ? 'Completed' : 'Mark as Completed' }}
+          </button>
+        </div>
+      </div>
+      <!-- Pickup requests at the top, newest first, styled as modern cards -->
+      <div class="pickup-requests-list" *ngIf="pendingPickupRequests.length > 0">
+        <div *ngFor="let req of pendingPickupRequests" class="pickup-request-card">
+          <div class="pickup-request-header">
+            <i class="fa-solid fa-bell"></i>
+            <span class="pickup-request-title">Pickup Request</span>
+            <span class="pickup-request-status" [ngClass]="{'pending': req.status === 'PENDING', 'completed': req.status === 'COMPLETED'}">{{ req.status }}</span>
+            <button class="pickup-request-toggle" (click)="togglePickupRequestDetails(req.id)" aria-label="Toggle details">
+              <i class="fa-solid" [ngClass]="expandedPickupRequestId === req.id ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+          </div>
+          <div class="pickup-request-main-info">
+            <span class="pickup-request-label"><i class="fa-solid fa-location-dot"></i> Location:</span>
+            <span class="pickup-request-value">{{ req.pickupLocation }}</span>
+            <span class="pickup-request-label ml-4"><i class="fa-regular fa-clock"></i> Requested:</span>
+            <span class="pickup-request-value">{{ req.createdAt | date:'short' }}</span>
+          </div>
+          <div class="pickup-request-details-expand" *ngIf="expandedPickupRequestId === req.id">
+            <div class="pickup-request-info"><span class="pickup-request-label">Sender Name:</span> <span class="pickup-request-value">{{ getParsedDetails(req).senderName }}</span></div>
+            <div class="pickup-request-info"><span class="pickup-request-label">Phone:</span> <span class="pickup-request-value">{{ getParsedDetails(req).senderPhone }}</span></div>
+            <div class="pickup-request-info"><span class="pickup-request-label">Parcel:</span> <span class="pickup-request-value">{{ getParsedDetails(req).parcelDescription }}</span></div>
+            <div class="pickup-request-info"><span class="pickup-request-label">Pickup Date:</span> <span class="pickup-request-value">{{ getParsedDetails(req).pickupDate }}</span></div>
+            <div class="pickup-request-info" *ngIf="getParsedDetails(req).specialInstructions"><span class="pickup-request-label">Special Instructions:</span> <span class="pickup-request-value">{{ getParsedDetails(req).specialInstructions }}</span></div>
+          </div>
+          <button class="pickup-request-action" [disabled]="req.status === 'COMPLETED'" (click)="markPickupRequestCompleted(req)">
+            {{ req.status === 'COMPLETED' ? 'Completed' : 'Mark as Completed' }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="pendingPickupRequests.length === 0" class="notification-empty">No new pickup requests</div>
+    </div>
+  </div>
+  <div *ngIf="tab === 'deliveries'">
+    <div class="tab-card">
+      <div class="tab-title-row blue"><i class="fa-solid fa-truck"></i> <span>Pending Deliveries</span></div>
+      <div class="tab-subtitle">Items ready for delivery to customers</div>
+      <div class="parcel-list">
+        <div class="parcel-item" *ngFor="let delivery of pendingDeliveries$ | async; let i = index">
+          <div class="parcel-avatar">{{ delivery.receiverName.charAt(0) }}</div>
+          <div class="parcel-info">
+            <div class="parcel-id">{{ delivery.id }} <span class="priority high" *ngIf="i === 0">high</span><span class="priority medium" *ngIf="i === 1">medium</span></div>
+            <div class="parcel-meta"><i class="fa-solid fa-location-dot"></i> {{ delivery.destinationLocation.address }} ({{ delivery.receiverName }}) <i class="fa-regular fa-clock"></i> {{ delivery.estimatedDeliveryDate | date:'shortTime' }}</div>
+          </div>
+          <button class="parcel-action blue" [disabled]="delivery.status === 'DELIVERED'" (click)="markDeliveryCompleted(delivery)">
+            {{ delivery.status === 'DELIVERED' ? 'Completed' : 'Mark as Completed' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-toast></app-toast>
+</div>

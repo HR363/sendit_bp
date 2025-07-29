@@ -1,0 +1,178 @@
+<div class="create-parcel-container">
+  <div class="page-header">
+    <div class="header-icon"><i class="fa-solid fa-box"></i></div>
+    <div>
+      <h1 class="header-title">Create New Parcel</h1>
+      <p class="header-subtitle">Fill in the details below to create a new delivery order. Ensure all required fields are accurately completed.</p>
+    </div>
+  </div>
+
+  <form [formGroup]="parcelForm" (ngSubmit)="createParcel()">
+    <!-- Delivery Details -->
+    <div class="form-section">
+      <h2 class="section-title">Delivery Details</h2>
+      <p class="section-subtitle">Information about the sender, receiver, and addresses.</p>
+      <div class="grid-container">
+        <div class="form-field">
+          <label for="senderName">Sender Name</label>
+          <input type="text" id="senderName" formControlName="senderName" placeholder="e.g., John Doe">
+        </div>
+        <div class="form-field">
+          <label for="senderPhone">Sender Phone</label>
+          <input type="tel" id="senderPhone" formControlName="senderPhone" placeholder="e.g., +1 (555) 123-4567">
+        </div>
+        <div class="form-field">
+          <label for="senderEmail">Sender Email</label>
+          <input type="email" id="senderEmail" formControlName="senderEmail" placeholder="e.g., john@example.com">
+        </div>
+        <div class="form-field">
+          <label for="receiverName">Receiver Name</label>
+          <input type="text" id="receiverName" formControlName="receiverName" placeholder="e.g., Jane Smith">
+        </div>
+        <div class="form-field">
+          <label for="receiverPhone">Receiver Phone</label>
+          <input type="tel" id="receiverPhone" formControlName="receiverPhone" placeholder="e.g., +1 (555) 123-4567">
+        </div>
+        <div class="form-field">
+          <label for="receiverEmail">Receiver Email</label>
+          <input type="email" id="receiverEmail" formControlName="receiverEmail" placeholder="e.g., jane@example.com">
+        </div>
+        <div class="form-field">
+          <label for="pickupAddress">Pickup Address (Optional)</label>
+          <textarea id="pickupAddress" formControlName="pickupAddress" placeholder="Enter full pickup address including street, city, state, zip code"></textarea>
+        </div>
+        <div class="form-field">
+          <label for="destinationAddress">Destination Address</label>
+          <textarea id="destinationAddress" formControlName="destinationAddress" placeholder="Enter full destination address including street, city, state, zip code"></textarea>
+        </div>
+        <div class="form-field">
+          <label for="pickupDate">Preferred Pickup/Delivery Date (Optional)</label>
+          <input type="date" id="pickupDate" formControlName="pickupDate">
+        </div>
+      </div>
+    </div>
+
+    <!-- Parcel Information -->
+    <div class="form-section">
+      <h2 class="section-title">Parcel Information</h2>
+      <p class="section-subtitle">Details about the parcel's weight, category, and current status.</p>
+      <div class="grid-container">
+        <div class="form-field">
+          <label for="categoryId">Parcel Category</label>
+          <select id="categoryId" formControlName="categoryId">
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{category.name}} ({{category.minWeight}}-{{category.maxWeight}}kg)
+            </option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" formControlName="weight" placeholder="e.g., 5.3" step="0.1" min="0.1">
+        </div>
+        <div class="form-field">
+          <label for="status">Current Status</label>
+          <select id="status" formControlName="status">
+            <option *ngFor="let s of statuses" [value]="s">{{s}}</option>
+          </select>
+        </div>
+        <div class="form-field full-width">
+          <label for="description">Parcel Description (Optional)</label>
+          <input type="text" id="description" formControlName="description" placeholder="e.g., Fragile electronics, documents, clothing">
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Options -->
+    <div class="form-section">
+      <h2 class="section-title">Service Options</h2>
+      <p class="section-subtitle">Choose the delivery service type.</p>
+      <div class="service-options-grid">
+        <div class="delivery-type">
+          <label class="block-label">Delivery Service Type</label>
+          <div class="radio-group">
+            <label><input type="radio" value="Standard" formControlName="serviceType"> Standard (3-5 days)</label>
+            <label><input type="radio" value="Express" formControlName="serviceType"> Express (1-2 days)</label>
+            <label><input type="radio" value="Overnight" formControlName="serviceType"> Overnight</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="form-section">
+      <h2 class="section-title">Order Summary</h2>
+      <p class="section-subtitle">Review estimated costs and payment status.</p>
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoadingPricing" class="pricing-loading">
+        <p>Calculating pricing...</p>
+      </div>
+
+      <!-- Pricing Display -->
+      <div *ngIf="pricingData && !isLoadingPricing" class="pricing-breakdown">
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-label">Estimated Cost</span>
+            <span class="summary-value">${{pricingData.totalPrice.toFixed(2)}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Payment Status</span>
+            <span class="summary-value paid">Paid via Credit Card</span>
+          </div>
+        </div>
+
+        <!-- Pricing Breakdown -->
+        <div class="pricing-details">
+          <h4>Pricing Breakdown</h4>
+          <div class="breakdown-item">
+            <span>Base Price ({{pricingData.breakdown.category}})</span>
+            <span>${{pricingData.basePrice.toFixed(2)}}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Weight Cost ({{pricingData.breakdown.weight}}kg)</span>
+            <span>${{pricingData.weightPrice.toFixed(2)}}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Distance Cost ({{pricingData.breakdown.distance}}km)</span>
+            <span>${{pricingData.distancePrice.toFixed(2)}}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Service Multiplier ({{pricingData.breakdown.serviceType}})</span>
+            <span>×{{pricingData.serviceMultiplier}}</span>
+          </div>
+          <div class="breakdown-item total">
+            <span>Total</span>
+            <span>${{pricingData.totalPrice.toFixed(2)}}</span>
+          </div>
+          <div class="delivery-info">
+            <p><strong>Estimated Delivery:</strong> {{pricingData.breakdown.estimatedDays}} day(s)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Default State -->
+      <div *ngIf="!pricingData && !isLoadingPricing" class="summary-grid">
+        <div class="summary-item">
+          <span class="summary-label">Estimated Cost</span>
+          <span class="summary-value">$0.00</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Payment Status</span>
+          <span class="summary-value paid">Paid via Credit Card</span>
+        </div>
+      </div>
+
+      <div class="map-placeholder">
+        <p>preview route</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button type="submit" class="submit-btn" [disabled]="parcelForm.invalid || isSubmitting">
+        {{ isSubmitting ? 'Creating...' : 'Create Parcel' }}
+      </button>
+    </div>
+  </form>
+</div>

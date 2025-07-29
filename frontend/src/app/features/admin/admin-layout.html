@@ -1,0 +1,22 @@
+<div class="admin-dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-text" style="font-size:2.2rem;font-weight:900;line-height:1;">
+        <span style="color:#F97316;">Send</span><span style="color:#222;font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:900;letter-spacing:-1px;">It</span>
+      </span>
+      <span class="logo-dot"> Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a class="nav-link" routerLink="/admin/parcels" routerLinkActive="active"><i class="fa-solid fa-box"></i> Manage Parcels</a>
+      <a class="nav-link" routerLink="/admin/users" routerLinkActive="active"><i class="fa-solid fa-users"></i> Manage Users</a>
+      <a class="nav-link" routerLink="/admin/parcels/create" routerLinkActive="active"><i class="fa-solid fa-plus"></i> Create Delivery Order</a>
+      <a class="nav-link" routerLink="/admin/reports" routerLinkActive="active"><i class="fa-solid fa-file-lines"></i> Reports</a>
+    </nav>
+    <button class="signout-btn" (click)="signOut()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+  </aside>
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</div> 

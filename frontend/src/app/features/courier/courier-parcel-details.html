@@ -1,0 +1,103 @@
+<div class="parcel-details-container">
+  <!-- Back Button -->
+  <div class="back-button-container">
+    <button class="back-button" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Parcel List</span>
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="details-content" *ngIf="parcel">
+    <div class="details-header">
+      <div class="details-header-icon">
+        <i class="fa-solid fa-box"></i>
+      </div>
+      <div class="header-text">
+        <h1 class="details-title">Parcel Details</h1>
+        <p class="details-subtitle">Tracking ID: <span class="details-id">{{ parcel.id }}</span></p>
+      </div>
+    </div>
+
+    <div class="details-sections">
+      <div class="details-section">
+        <div class="section-header">
+          <i class="fa-solid fa-users"></i>
+          <h2 class="section-title">Sender & Receiver</h2>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="label">Sender:</span>
+            <span class="value">{{ parcel.senderName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Receiver:</span>
+            <span class="value">{{ parcel.receiverName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Status:</span>
+            <span class="status-badge" [ngClass]="getStatusClass(parcel.status)">{{ parcel.status }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Created:</span>
+            <span class="value">{{ parcel.createdAt | date:'medium' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-section">
+        <div class="section-header">
+          <i class="fa-solid fa-location-dot"></i>
+          <h2 class="section-title">Addresses</h2>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item full-width">
+            <span class="label">Pickup Address:</span>
+            <span class="value">{{ parcel.pickupLocation }}</span>
+          </div>
+          <div class="detail-item full-width">
+            <span class="label">Destination Address:</span>
+            <span class="value">{{ parcel.destinationLocation }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-section">
+        <div class="section-header">
+          <i class="fa-solid fa-info-circle"></i>
+          <h2 class="section-title">Parcel Info</h2>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="label">Weight:</span>
+            <span class="value">{{ parcel.weight }} kg</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Price:</span>
+            <span class="value cost">${{ parcel.price }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Delivery Date:</span>
+            <span class="value">{{ parcel.estimatedDeliveryDate | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Last Updated:</span>
+            <span class="value">{{ parcel.updatedAt | date:'medium' }}</span>
+          </div>
+          <div class="detail-item full-width" *ngIf="parcel.description">
+            <span class="label">Description:</span>
+            <span class="value">{{ parcel.description }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="details-content" *ngIf="!parcel">
+    <div class="loading-state">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <p>Loading parcel details...</p>
+    </div>
+  </div>
+</div>

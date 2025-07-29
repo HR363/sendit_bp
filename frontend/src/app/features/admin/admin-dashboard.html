@@ -1,0 +1,143 @@
+<header class="admin-topbar">
+  <input class="search-bar" type="text" placeholder="Search parcels, users, or reports..." />
+  <div class="topbar-actions">
+    <button class="notif-btn"><i class="fa-regular fa-bell"></i></button>
+    <div class="admin-avatar">A</div>
+  </div>
+</header>
+
+<!-- Dashboard Content -->
+<div class="dashboard-content">
+  <h1 class="dashboard-title">Dashboard Overview</h1>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="flex justify-center items-center py-12">
+    <div class="text-lg text-gray-600">Loading dashboard...</div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="text-red-800">{{ error() }}</div>
+    <button type="button" (click)="loadMetrics()" class="mt-2 text-red-600 hover:text-red-800 underline">Try again</button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="dashboard-filter-bar">
+    <select class="dashboard-filter-select">
+      <option>Last 30 Days</option>
+      <option>Last 7 Days</option>
+      <option>This Month</option>
+      <option>Last Month</option>
+    </select>
+    <button class="dashboard-filter-btn apply"><i class="fa-solid fa-filter"></i> Apply Filters</button>
+    <button class="dashboard-filter-btn export"><i class="fa-solid fa-download"></i> Export Report</button>
+  </div>
+
+  <!-- Modern Stats Cards -->
+  <div *ngIf="metrics() && !loading()" class="modern-stats-cards">
+    <div class="modern-stats-card">
+      <div class="stats-card-icon"><i class="fa-solid fa-box"></i></div>
+      <div class="stats-card-label">Total Parcels</div>
+      <div class="stats-card-value">{{ metrics()!.totalParcels | number }}</div>
+      <div class="stats-card-desc">All-time packages handled</div>
+    </div>
+    <div class="modern-stats-card">
+      <div class="stats-card-icon orange"><i class="fa-solid fa-sack-dollar"></i></div>
+      <div class="stats-card-label">Revenue</div>
+      <div class="stats-card-value">{{ formatCurrency(metrics()!.totalRevenue) }}</div>
+      <div class="stats-card-desc">Total revenue all-time</div>
+    </div>
+    <div class="modern-stats-card">
+      <div class="stats-card-icon blue"><i class="fa-solid fa-clock"></i></div>
+      <div class="stats-card-label">On-Time Rate</div>
+      <div class="stats-card-value">{{ calculateOnTimeRate() }}</div>
+      <div class="stats-card-desc">Deliveries made on time</div>
+    </div>
+    <div class="modern-stats-card">
+      <div class="stats-card-icon green"><i class="fa-solid fa-stopwatch"></i></div>
+      <div class="stats-card-label">Parcels Today</div>
+      <div class="stats-card-value">{{ metrics()!.parcelsToday }}</div>
+      <div class="stats-card-desc">Parcels created today</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div *ngIf="metrics() && !loading()" class="chart-card">
+    <div class="chart-title">Monthly Parcel Volume</div>
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [xaxis]="chartOptions.xaxis"
+      [stroke]="chartOptions.stroke"
+      [dataLabels]="chartOptions.dataLabels"
+      [grid]="chartOptions.grid"
+      [title]="chartOptions.title"
+      [markers]="chartOptions.markers"
+      [yaxis]="chartOptions.yaxis"
+      [tooltip]="chartOptions.tooltip"
+      [fill]="chartOptions.fill"
+      [legend]="chartOptions.legend">
+    </apx-chart>
+  </div>
+
+  <!-- Recent Parcel Activity Table -->
+  <div class="table-card">
+    <div class="table-title">Recent Parcel Activity</div>
+    <table class="activity-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tracking Number</th>
+          <th>Sender</th>
+          <th>Recipient</th>
+          <th>Status</th>
+          <th>Delivery Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let parcel of metrics()!.recentActivity; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><a class="tracking-link">{{ parcel.trackingNumber }}</a></td>
+          <td>{{ parcel.sender?.firstName }} {{ parcel.sender?.lastName }}</td>
+          <td>{{ parcel.receiver?.firstName }} {{ parcel.receiver?.lastName }}</td>
+          <td><span class="badge" [ngClass]="{
+            'in-transit': parcel.status === 'IN_TRANSIT',
+            'pending': parcel.status === 'PENDING',
+            'delivered': parcel.status === 'DELIVERED',
+            'cancelled': parcel.status === 'CANCELLED'
+          }">{{ parcel.status.replace('_', ' ') }}</span></td>
+          <td>{{ parcel.actualDeliveryDate ? (parcel.actualDeliveryDate | date:'yyyy-MM-dd') : '-' }}</td>
+          <td>...</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination">&lt; Previous 1 2 3 Next &gt;</div>
+  </div>
+
+  <!-- Recent System Activities -->
+  <div *ngIf="metrics() && !loading()" class="system-activity-card">
+    <div class="system-title">Recent System Activities</div>
+    <ul class="system-activity-list">
+      <li *ngFor="let activity of metrics()!.recentActivity">
+        Parcel {{ activity.trackingNumber }}: {{ activity.status.replace('_', ' ') }}
+        <span class="activity-time">{{ getTimeAgo(activity.createdAt) }}</span>
+      </li>
+      <li *ngIf="metrics()!.recentActivity.length === 0" class="text-gray-500 italic">
+        No recent activity found
+      </li>
+
+
+      <li>Rupali “Daily Deliveries” granted successfully <span class="activity-time">1 day ago</span></li>
+
+    </ul>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-admin">
+    <button class="quick-btn"><i class="fa-solid fa-location-crosshairs"></i> Track Parcel</button>
+    <button class="quick-btn"><i class="fa-solid fa-users"></i> Manage Customers</button>
+    <button class="quick-btn"><i class="fa-solid fa-plus"></i> Quick Create Delivery</button>
+    <button class="quick-btn"><i class="fa-solid fa-sort"></i> Sort Deliveries</button>
+  </div>
+</div> 

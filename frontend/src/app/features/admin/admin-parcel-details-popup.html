@@ -1,0 +1,38 @@
+<div class="popup-backdrop" *ngIf="open">
+  <div class="popup-modal">
+    <div class="popup-header">
+      <div class="popup-header-icon"><i class="fa-solid fa-box"></i></div>
+      <div>
+        <h2 class="popup-title">Parcel Details</h2>
+        <p class="popup-subtitle">Tracking ID: <span class="popup-id">{{ parcel?.id }}</span></p>
+      </div>
+      <button class="popup-close" (click)="close()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="popup-section">
+      <h3 class="section-title">Sender & Receiver</h3>
+      <div class="popup-grid">
+        <div><span class="label">Sender:</span> {{ parcel?.sender }}</div>
+        <div><span class="label">Receiver:</span> {{ parcel?.receiver }}</div>
+        <div><span class="label">Zone:</span> {{ parcel?.zone }}</div>
+        <div><span class="label">Status:</span> <span class="status-badge" [ngClass]="getStatusClass(parcel?.status)">{{ parcel?.status }}</span></div>
+      </div>
+    </div>
+    <div class="popup-section">
+      <h3 class="section-title">Addresses</h3>
+      <div class="popup-grid">
+        <div><span class="label">Pickup Address:</span> {{ parcel?.pickupAddress || 'N/A' }}</div>
+        <div><span class="label">Destination Address:</span> {{ parcel?.destinationAddress || 'N/A' }}</div>
+      </div>
+    </div>
+    <div class="popup-section">
+      <h3 class="section-title">Parcel Info</h3>
+      <div class="popup-grid">
+        <div><span class="label">Weight:</span> {{ parcel?.weight || 'N/A' }} kg</div>
+        <div><span class="label">Description:</span> {{ parcel?.description || 'N/A' }}</div>
+        <div><span class="label">Service Type:</span> {{ parcel?.serviceType || 'N/A' }}</div>
+        <div><span class="label">Last Update:</span> {{ parcel?.lastUpdate }}</div>
+        <div><span class="label">Estimated Cost:</span> ${{ parcel?.cost || 'N/A' }}</div>
+      </div>
+    </div>
+  </div>
+</div>
